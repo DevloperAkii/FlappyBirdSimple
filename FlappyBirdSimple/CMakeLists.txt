@@ -12,9 +12,6 @@ target_compile_definitions(FlappyBirdSimple PRIVATE RESOURCE_PATH="${CMAKE_CURRE
 # 2. Local Source Includes
 target_include_directories(FlappyBirdSimple PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
-# 3. Third-Party Includes (Points to where the GLFW folder sits)
-target_include_directories(FlappyBirdSimple PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/IMGUI")
-
 # 4. Link Libraries
 # FIX: Just linking 'glad' now automatically handles its include path!
 target_link_libraries(FlappyBirdSimple PRIVATE 
@@ -23,6 +20,7 @@ target_link_libraries(FlappyBirdSimple PRIVATE
     opengl32
     imgui
     glm
+    stbi
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

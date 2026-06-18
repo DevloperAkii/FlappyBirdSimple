@@ -3,6 +3,7 @@
 #include "PCH.h"
 #include "Window.h"
 #include "Shader.h"
+#include "Texture.h"
 
 #include <glm/glm.hpp>
 #include <memory>
@@ -12,14 +13,16 @@
 struct DrawData 
 {
 public:
-	DrawData(Shader& shader);
+	DrawData(Shader* shader);
+	DrawData(Shader* shader, Texture* texture);
 	~DrawData();
 
 	void GenerateDrawData(std::vector<float>& vertices, std::vector<uint32_t>& indices);
 private:
 	friend class Renderer;
 
-	Shader& m_Shader;
+	Shader* m_Shader;
+	Texture* m_Texture;
 
 	uint32_t m_VAO = 0;
 	uint32_t m_VBO = 0;
@@ -28,6 +31,7 @@ private:
 
 	bool m_Drawable = false;
 	bool m_ExistInDrawCall = false;
+	bool m_HasTexture = false;
 };
 
 class Renderer 
@@ -47,6 +51,7 @@ public:
 private:
 	friend struct DrawData;
 	friend class Shader;
+	friend class Texture;
 
 	inline static float s_ClearColorRed = 0.0f, s_ClearColorGreen= 0.0f, s_ClearColorBlue = 0.0f, s_ClearColorAlpha = 0.0f;
 	inline static int s_FrameBufferWidth = 0, s_FrameBufferHeight = 0;

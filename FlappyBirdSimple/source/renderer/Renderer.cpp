@@ -5,9 +5,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-DrawData::DrawData(Shader& shader) : m_Shader(shader)
+DrawData::DrawData(Shader* shader) : m_Shader(shader), m_Texture(nullptr)
 {
+	m_HasTexture = false;
+}
 
+DrawData::DrawData(Shader* shader, Texture* texture) : m_Shader(shader), m_Texture(texture)
+{
+	m_HasTexture = true;
 }
 
 DrawData::~DrawData()
@@ -24,8 +29,10 @@ void DrawData::GenerateDrawData(std::vector<float>& vertices, std::vector<uint32
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (const void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (const void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (const void*)(sizeof(float) * 3));
+	glEnableVertexAttribArray(1);
 
 	glGenBuffers(1, &m_EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
@@ -62,6 +69,9 @@ void Renderer::StartFrame()
 	{
 		glClearColor(s_ClearColorRed, s_ClearColorGreen, s_ClearColorBlue, s_ClearColorAlpha);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 }
 
@@ -85,9 +95,15 @@ void Renderer::EndFrame()
 		{
 			glBindVertexArray(drawData->m_VAO);
 
-			drawData->m_Shader.Bind();
+			drawData->m_Shader->Bind();
 			s_ProjectionMatrix = glm::ortho(0.0f, (float)s_FrameBufferWidth, 0.0f, (float)s_FrameBufferHeight, -1.0f, 1.0f);
-			drawData->m_Shader.SetUniform(Shader::Mat4, "projMat", s_ProjectionMatrix);
+			drawData->m_Shader->SetUniform(Shader::Mat4, "u_ProjMat", s_ProjectionMatrix);
+
+			if(drawData->m_HasTexture)
+			{
+				drawData->m_Texture->Bind();
+				drawData->m_Shader->SetUniform(Shader::Int, "u_BaseTexture", drawData->m_Texture->m_TextureSlot);
+			}
 
 			glDrawElements(GL_TRIANGLES, drawData->m_IndicesCount, GL_UNSIGNED_INT, nullptr);
 		}

@@ -10,6 +10,7 @@ public:
 	enum UniformType
 	{
 		None = -1,
+		Int,
 		Float,
 		Vec2,
 		Vec3,
@@ -20,7 +21,7 @@ public:
 	~Shader();
 	void Bind();
 	void UnBind();
-	void SetUniform(UniformType uniformType, std::string name, std::variant<float, glm::vec2, glm::vec3, glm::mat4> value);
+	void SetUniform(UniformType uniformType, std::string name, std::variant<int, float, glm::vec2, glm::vec3, glm::mat4> value);
 
 private:
 	uint32_t CompileOpenGLShader(const unsigned int type, const std::string& file);

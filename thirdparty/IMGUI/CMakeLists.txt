@@ -18,8 +18,10 @@ add_library(imgui STATIC ${IMGUI_SOURCES})
 
 # 4. Expose the directories so your main project can find the headers
 target_include_directories(imgui PUBLIC 
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+target_include_directories(imgui PRIVATE 
     "${CMAKE_CURRENT_SOURCE_DIR}/imgui"
-    "${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends"
 )
 
 # 5. Link against your GLFW target

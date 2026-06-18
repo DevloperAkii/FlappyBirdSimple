@@ -42,7 +42,7 @@ void Shader::UnBind()
 	m_Bounded = false;
 }
 
-void Shader::SetUniform(UniformType uniformType, std::string name, std::variant<float, glm::vec2, glm::vec3, glm::mat4> value)
+void Shader::SetUniform(UniformType uniformType, std::string name, std::variant<int, float, glm::vec2, glm::vec3, glm::mat4> value)
 {
 	Bind();
 	if (Renderer::s_CurrentAPI == Renderer::OPENGL)
@@ -50,6 +50,13 @@ void Shader::SetUniform(UniformType uniformType, std::string name, std::variant<
 		switch (uniformType)
 		{
 		case Shader::None:
+			break;
+		case Shader::Int:
+			if (std::holds_alternative<int>(value))
+			{
+				int i = std::get<int>(value);
+				glUniform1i(GetUnifromLocation(name), i);
+			}
 			break;
 		case Shader::Float:
 			if (std::holds_alternative<float>(value)) 

@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "renderer/Renderer.h"
 #include "renderer/ImGui.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 Application::Application()
 {
@@ -18,14 +19,20 @@ Application::~Application()
 void Application::Run() 
 {
 	Shader shader(RESOURCE_PATH"vertexshader.glsl", RESOURCE_PATH"fragmentshader.glsl");
-	DrawData drawData1(shader);
+	Texture texture(RESOURCE_PATH"yellowbird-midflap.png");
+	DrawData drawData1(&shader, &texture);
+
+	glm::mat4 modelMat = glm::mat4(1.0f);
+	modelMat = glm::translate(modelMat, glm::vec3(1280.0f / 2.0f, 720.0f / 2.0f, 0.0f));
+	shader.SetUniform(Shader::Mat4, "u_ModelMat", modelMat);
 
 	std::vector<float> vertices =
 	{
-		 100.0f, -100.0f, 0.0f,
-		-100.0f, -100.0f, 0.0f,
-		-100.0f,  100.0f, 0.0f,
-		 100.0f,  100.0f, 0.0f,
+		 // Position				// UV Coords 
+		 50.0f, -50.0f, 0.0f,		1.0f, 0.0f,
+		-50.0f, -50.0f, 0.0f,		0.0f, 0.0f,
+		-50.0f,  50.0f, 0.0f,		0.0f, 1.0f,
+		 50.0f,  50.0f, 0.0f,		1.0f, 1.0f,
 	};
 	std::vector<uint32_t> indices =
 	{
@@ -39,16 +46,11 @@ void Application::Run()
 	{
 		m_Window->PollEvents();
 
-
 		Renderer::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		Renderer::StartFrame();
 		ImGuiLayer::StartFrame();
 
 		Renderer::Draw(drawData1);
-		ImGui::Begin("Test Window");
-		ImGui::Text("Temp Text");
-		ImGui::End();
-
 
 		ImGuiLayer::EndFrame();
 		Renderer::EndFrame();
