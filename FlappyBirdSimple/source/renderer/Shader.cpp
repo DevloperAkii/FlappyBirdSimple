@@ -147,7 +147,7 @@ uint32_t Shader::GetUnifromLocation(const std::string& name) {
 
 	int location = glGetUniformLocation(m_ShaderID, name.c_str());
 	if (location == -1) {
-		std::cout << "[WARNING]" << name.c_str() << "dose not exist!" << std::endl;
+		std::cout << "[WARNING]" << name.c_str() << " dose not exist!" << std::endl;
 	}
 	m_UnfiromLocationCache[name] = location;
 	return location;

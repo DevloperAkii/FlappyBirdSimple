@@ -19,6 +19,8 @@ public:
 	void PollEvents();
 private:
 	friend class Renderer;
+	friend class GameScene;
+
 	GLFWwindow* m_Window = nullptr;
 
 	WindowConfig m_Config;

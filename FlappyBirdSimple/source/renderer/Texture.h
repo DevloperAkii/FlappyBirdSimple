@@ -1,9 +1,8 @@
 #pragma once
-#include <string>
 #include "PCH.h"
 
-//TODO : Should managed by a Resource Manager
-static uint32_t s_TexturesCount = 0;
+#include <string>
+#include <glm/glm.hpp>
 
 class Texture 
 {
@@ -13,13 +12,14 @@ public:
 
 	void Bind();
 	void UnBind();
+	void SetTile(glm::vec2 tile);
+	glm::vec2& GetTile();
 private:
 	friend class Renderer;
 
 	uint32_t m_TextureID = 0;
 	int m_Width = 0, m_Height = 0, m_NrComponent = 0;
-	int m_TextureSlot = -1;
-	bool m_Bounded = false;
+	glm::vec2 m_Tile = glm::vec2(1.0f);
 
 	inline static bool s_Init = false;
 };

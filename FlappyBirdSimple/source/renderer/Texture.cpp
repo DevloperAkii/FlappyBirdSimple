@@ -11,7 +11,6 @@ Texture::Texture(std::string textureFilePath)
         stbi_set_flip_vertically_on_load(true);
         s_Init = true;
     }
-
     if (Renderer::s_CurrentAPI == Renderer::OPENGL) 
     {
         glGenTextures(1, &m_TextureID);
@@ -33,14 +32,12 @@ Texture::Texture(std::string textureFilePath)
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         }
         if(data) stbi_image_free(data);
         ASSERT(!data, "Texture failed to load at path:", textureFilePath)
-        m_TextureSlot = s_TexturesCount;
-        s_TexturesCount++;
     }
 }
 
@@ -54,19 +51,26 @@ Texture::~Texture()
 
 void Texture::Bind()
 {
-    if (m_Bounded) return;
     if (Renderer::s_CurrentAPI == Renderer::OPENGL) 
     {
         glBindTexture(GL_TEXTURE_2D, m_TextureID);
     }
-    m_Bounded = true;
 }
 
 void Texture::UnBind()
 {
-    m_Bounded = false;
     if (Renderer::s_CurrentAPI == Renderer::OPENGL)
     {
         glBindTexture(GL_TEXTURE_2D ,0);
     }
+}
+
+void Texture::SetTile(glm::vec2 tile)
+{
+    m_Tile = tile;
+}
+
+glm::vec2& Texture::GetTile()
+{
+    return m_Tile;
 }

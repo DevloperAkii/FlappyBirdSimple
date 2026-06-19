@@ -15,19 +15,26 @@ struct DrawData
 public:
 	DrawData(Shader* shader);
 	DrawData(Shader* shader, Texture* texture);
+	DrawData();
 	~DrawData();
 
 	void GenerateDrawData(std::vector<float>& vertices, std::vector<uint32_t>& indices);
+	void UpdateShader(Shader* shader);
+	void UpdateTexture(Texture* texture);
+public:
+	glm::vec3 Position = glm::vec3(0.0f);
+	glm::vec3 Scale = glm::vec3(1.0f);
 private:
 	friend class Renderer;
 
-	Shader* m_Shader;
-	Texture* m_Texture;
+	Shader* m_Shader = nullptr;
+	Texture* m_Texture = nullptr;
 
 	uint32_t m_VAO = 0;
 	uint32_t m_VBO = 0;
 	uint32_t m_EBO = 0;
 	uint32_t m_IndicesCount = 0;
+
 
 	bool m_Drawable = false;
 	bool m_ExistInDrawCall = false;
@@ -55,7 +62,7 @@ private:
 
 	inline static float s_ClearColorRed = 0.0f, s_ClearColorGreen= 0.0f, s_ClearColorBlue = 0.0f, s_ClearColorAlpha = 0.0f;
 	inline static int s_FrameBufferWidth = 0, s_FrameBufferHeight = 0;
-	inline static glm::mat4 s_ProjectionMatrix = glm::mat4(1.0f);
-	inline static RendererAPI s_CurrentAPI = RendererAPI::NONE;
+	inline static int s_TextureSlot = 0;
 	inline static std::vector<DrawData*> s_DataToDraw = std::vector<DrawData*>();
+	inline static RendererAPI s_CurrentAPI = RendererAPI::NONE;
 };

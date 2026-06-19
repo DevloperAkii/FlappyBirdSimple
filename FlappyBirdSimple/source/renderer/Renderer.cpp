@@ -5,7 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-DrawData::DrawData(Shader* shader) : m_Shader(shader), m_Texture(nullptr)
+DrawData::DrawData(Shader* shader) : m_Shader(shader)
 {
 	m_HasTexture = false;
 }
@@ -14,6 +14,8 @@ DrawData::DrawData(Shader* shader, Texture* texture) : m_Shader(shader), m_Textu
 {
 	m_HasTexture = true;
 }
+
+DrawData::DrawData(){}
 
 DrawData::~DrawData()
 {
@@ -45,6 +47,24 @@ void DrawData::GenerateDrawData(std::vector<float>& vertices, std::vector<uint32
 	m_IndicesCount = (uint32_t)indices.size();
 }
 
+void DrawData::UpdateShader(Shader* shader)
+{
+	if(m_Shader) m_Shader->UnBind();
+	m_Shader = shader;
+}
+
+void DrawData::UpdateTexture(Texture* texture)
+{
+	if (!texture) 
+	{
+		m_HasTexture = false;
+		return;
+	}
+	if(m_Texture) m_Texture->UnBind();
+	m_Texture = texture;
+	m_HasTexture = true;
+}
+
 
 void Renderer::Init(RendererAPI api)
 {
@@ -55,6 +75,9 @@ void Renderer::Init(RendererAPI api)
 		ASSERT(!result, "FAILES TO LOAD OPENGL!");
 
 		glfwGetFramebufferSize(glfwGetCurrentContext(), &s_FrameBufferWidth, &s_FrameBufferHeight);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 }
 
@@ -70,8 +93,8 @@ void Renderer::StartFrame()
 		glClearColor(s_ClearColorRed, s_ClearColorGreen, s_ClearColorBlue, s_ClearColorAlpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glfwGetFramebufferSize(glfwGetCurrentContext(), &s_FrameBufferWidth, &s_FrameBufferHeight);
+		glViewport(0, 0, s_FrameBufferWidth, s_FrameBufferHeight);
 	}
 }
 
@@ -91,22 +114,48 @@ void Renderer::EndFrame()
 {
 	if (s_CurrentAPI == OPENGL)
 	{
-		for (auto& drawData : s_DataToDraw) 
+		for (auto& drawData : s_DataToDraw)
 		{
 			glBindVertexArray(drawData->m_VAO);
-
 			drawData->m_Shader->Bind();
-			s_ProjectionMatrix = glm::ortho(0.0f, (float)s_FrameBufferWidth, 0.0f, (float)s_FrameBufferHeight, -1.0f, 1.0f);
-			drawData->m_Shader->SetUniform(Shader::Mat4, "u_ProjMat", s_ProjectionMatrix);
 
-			if(drawData->m_HasTexture)
+			// Setup matrices
+			glm::mat4 projectionMatrix = glm::mat4(1.0f);
+			projectionMatrix = glm::ortho(0.0f, (float)s_FrameBufferWidth, 0.0f, (float)s_FrameBufferHeight, -1.0f, 1.0f);
+			drawData->m_Shader->SetUniform(Shader::Mat4, "u_ProjMat", projectionMatrix);
+
+			glm::mat4 modelMatrix = glm::mat4(1.0f);
+			modelMatrix = glm::translate(modelMatrix, drawData->Position);
+			modelMatrix = glm::scale(modelMatrix, drawData->Scale);
+			drawData->m_Shader->SetUniform(Shader::Mat4, "u_ModelMat", modelMatrix);
+
+			// Isolate texture bindings per entity
+			if (drawData->m_HasTexture)
 			{
+				glActiveTexture(GL_TEXTURE0 + s_TextureSlot); // Lock to binding slot 0
 				drawData->m_Texture->Bind();
-				drawData->m_Shader->SetUniform(Shader::Int, "u_BaseTexture", drawData->m_Texture->m_TextureSlot);
+				drawData->m_Shader->SetUniform(Shader::Int, "u_BaseTexture", s_TextureSlot);
+				drawData->m_Shader->SetUniform(Shader::Vec2, "u_Tile", drawData->m_Texture->m_Tile);
+				s_TextureSlot++;
+			}
+			else
+			{
+				// FIX: If the shape doesn't use a texture, break the bind on slot 0
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 
 			glDrawElements(GL_TRIANGLES, drawData->m_IndicesCount, GL_UNSIGNED_INT, nullptr);
+			drawData->m_Shader->UnBind();
+
+			// CRITICAL FIX: Unlock the data asset configuration state for the next frame
+			drawData->m_ExistInDrawCall = false;
 		}
+
+		// CRITICAL FIX: Empty the draw list queue container completely before starting a new frame
+		s_TextureSlot = 0;
+		s_DataToDraw.clear();
+
 		glfwSwapBuffers(glfwGetCurrentContext());
 	}
 }
