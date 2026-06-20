@@ -14,12 +14,13 @@ Window::Window(WindowConfig config)
 
 	m_Window = glfwCreateWindow(config.Width, config.Height, config.Title.c_str(), nullptr, nullptr);
 
+	glfwMakeContextCurrent(m_Window);
+
 	glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
 		{
 			Renderer::ResizeFrameBuffer(width, height);
 		});
 
-	glfwMakeContextCurrent(m_Window);
 	m_Config = std::move(config);
 }
 Window::~Window() 

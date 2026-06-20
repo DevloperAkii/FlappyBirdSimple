@@ -10,24 +10,47 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <variant>
 #include <flat_map>
+
 
 struct DrawData
 {
 public:
+	enum DrawMode 
+	{
+		Triangle,
+		Line,
+	};
+
 	void GenerateDrawData(std::vector<float>& vertices, std::vector<uint32_t>& indices);
+	void GenerateDrawData(std::vector<float>& vertices);
+
 	void UpdateShader(Shader& shader);
 	void UpdateTexture(Texture& texture);
+
+	void UpdateUniform(Shader::UniformType uniformType, std::string name, std::variant<int, float, glm::vec2, glm::vec3, glm::mat4> value);
 private:
 	friend class Renderer;
 
-	uint32_t m_ShaderID = 0;
-	uint32_t m_TextureID = 0;
+	struct UniformStructure 
+	{
+		Shader::UniformType uniformType;
+		std::string name;
+		UnifromValues value;
+	};
+
+	Shader* m_Shader = nullptr;
+	Texture* m_Texture = nullptr;
 
 	uint32_t m_VAO = 0;
 	uint32_t m_VBO = 0;
 	uint32_t m_EBO = 0;
 	uint32_t m_IndicesCount = 0;
+	uint32_t m_VerticesCount = 0;
+	DrawMode m_Topology = DrawMode::Triangle;
+
+	std::vector<UniformStructure> m_ShaderUniforms = std::vector<UniformStructure>();
 
 	bool m_Drawable = false;
 	bool m_HasTexture = false;
@@ -35,10 +58,7 @@ private:
 
 struct LineData 
 {
-	uint32_t m_VAO = 0;
-	uint32_t m_VBO = 0;
-
-	Shader m_Shader = Shader(RESOURCE_PATH"Assets/shaders/ColorVertexShader.glsl", RESOURCE_PATH"Assets/shaders/ColorFragmentShader.glsl");
+	DrawData m_DrawData;
 
 	bool Generated = false;
 };
@@ -56,12 +76,11 @@ public:
 
 	static void ResizeFrameBuffer(int width, int height);
 	static void GetFrameBuffer(int* width,int* height);
-	static int GetTextureSlot();
 
 	static void SetClearColor(float r, float g, float b, float a);
 	static void StartFrame();
 	static void Draw(DrawData& drawData);
-	static void DrawLine(glm::vec3 startPos, glm::vec3 endPos, glm::vec3 Color = glm::vec3(1.0f));
+	static void DrawLine(glm::vec3 startPos, glm::vec3 endPos, Shader shader, glm::vec3 Color = glm::vec3(1.0f));
 	static void EndFrame();
 
 	static void SwapFrameBuffer();
@@ -74,7 +93,7 @@ private:
 	inline static int s_FrameBufferWidth = 0, s_FrameBufferHeight = 0;
 	inline static int s_TextureSlot = 0;
 
-	inline static std::flat_map<uint32_t, std::vector<DrawData>> s_DataToDraw = std::flat_map<uint32_t, std::vector<DrawData>>();
+	inline static std::flat_map<uint32_t, std::vector<DrawData*>> s_DataToDraw = std::flat_map<uint32_t, std::vector<DrawData*>>();
 	inline static RendererAPI s_CurrentAPI = RendererAPI::NONE;
 	inline static LineData s_LineData = LineData();
 };

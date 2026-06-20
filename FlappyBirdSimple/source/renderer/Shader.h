@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <unordered_map>
 
+#define UnifromValues std::variant<int, float, glm::vec2, glm::vec3, glm::mat4>
+
 class Shader
 {
 public:
@@ -21,9 +23,10 @@ public:
 	~Shader();
 	void Bind();
 	void UnBind();
-	void SetUniform(UniformType uniformType, std::string name, std::variant<int, float, glm::vec2, glm::vec3, glm::mat4> value);
 
 private:
+	void SetUniform(UniformType uniformType, std::string name, UnifromValues value);
+
 	uint32_t CompileOpenGLShader(const unsigned int type, const std::string& file);
 	uint32_t CreateOpenGLShader(const std::string VertexShaderFile, const std::string FragmentShaderFile);
 	uint32_t GetUnifromLocation(const std::string& name);

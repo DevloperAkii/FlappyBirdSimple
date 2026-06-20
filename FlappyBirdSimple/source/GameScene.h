@@ -33,48 +33,37 @@ private:
 	std::unordered_map<PipesType, PipesScaleAndPositon> m_Pipes = std::unordered_map<PipesType, PipesScaleAndPositon>();
 };
 
-class GameScene 
+class GameScene
 {
 public:
-	GameScene(std::shared_ptr<Window>& window);
-	~GameScene();
+    GameScene(std::shared_ptr<Window>& window);
+    ~GameScene();
 
-	void UpdateScene(float deltaTime);
+    void UpdateScene(float deltaTime);
 private:
-	WindowConfig& m_WindowConfig;
+    WindowConfig& m_WindowConfig;
 
-	SpriteRenderer m_BackgroundSprite;
-	SpriteRenderer m_BaseSprite;
-	SpriteRenderer m_YellowBirdSprite;
+    SpriteRenderer m_BackgroundSprite;
+    SpriteRenderer m_BaseSprite;
+    SpriteRenderer m_YellowBirdSprite;
 
-	std::vector<Texture> m_BirdTextures = 
-	{
-		Texture(RESOURCE_PATH"Assets/sprites/yellowbird-upflap.png"),
-		Texture(RESOURCE_PATH"Assets/sprites/yellowbird-midflap.png"),
-		Texture(RESOURCE_PATH"Assets/sprites/yellowbird-downflap.png"),
-	};
-	Texture m_BackgroundTexture = Texture(RESOURCE_PATH"Assets/sprites/background-day.png");
-	Texture m_BaseTexture = Texture(RESOURCE_PATH"Assets/sprites/base.png");
-	Texture m_GreenPipeTexture = Texture(RESOURCE_PATH"Assets/sprites/pipe-green.png");
+    // FIX 1: Store references/pointers to prevent copying and destructor deletions
+    std::vector<Texture*> m_BirdTextures;
 
-	std::vector<PipeSets> m_Pipes = 
-	{
-		PipeSets(PipeSets::Low),
-		PipeSets(PipeSets::Middle),
-		PipeSets(PipeSets::High),
-	};
-	//PipeSets m_ConfigurationPipes = PipeSets(PipeSets::High, m_GreenPipeTexture);
+    Texture* m_BackgroundTexture = nullptr;
+    Texture* m_BaseTexture = nullptr;
+    Texture* m_GreenPipeTexture = nullptr;
 
-	//Base Animation Controls
-	float m_TextureScollSpeed = 0.2f;
+    std::vector<PipeSets*> m_Pipes;
 
-	//Brid Animation Controls
-	int index = 0;
-	const int m_AnimationFrame = 30;
+    glm::vec3 m_BirdVelocity = glm::vec3(0.0f);
+    bool jumpPressedBefore = false;
 
-	int m_BirdAnimationSwapOnFrame = 2;
-	int m_Frame = 0;
-
-	float m_FramePerSecond = 0.0f;
-	float m_AnimationTimer = 0.0f;
+    float m_TextureScollSpeed = 0.2f;
+    int index = 0;
+    const int m_AnimationFrame = 30;
+    int m_BirdAnimationSwapOnFrame = 2;
+    int m_Frame = 0;
+    float m_FramePerSecond = 0.0f;
+    float m_AnimationTimer = 0.0f;
 };
