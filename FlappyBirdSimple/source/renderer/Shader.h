@@ -28,7 +28,10 @@ private:
 	uint32_t CreateOpenGLShader(const std::string VertexShaderFile, const std::string FragmentShaderFile);
 	uint32_t GetUnifromLocation(const std::string& name);
 private:
-	uint32_t m_ShaderID = 0;
+	friend class Renderer;
+	friend class DrawData;
+
+	uint32_t m_ShaderHandel = 0;
 	bool m_Bounded = false;
 	std::unordered_map<std::string, uint32_t> m_UnfiromLocationCache;
 };

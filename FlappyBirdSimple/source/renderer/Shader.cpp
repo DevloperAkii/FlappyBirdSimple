@@ -11,7 +11,7 @@ Shader::Shader(std::string vertexShaderPath, std::string fragmentShaderPath)
 {
 	if (Renderer::s_CurrentAPI == Renderer::OPENGL) 
 	{
-		m_ShaderID = CreateOpenGLShader(vertexShaderPath, fragmentShaderPath);
+		m_ShaderHandel = CreateOpenGLShader(vertexShaderPath, fragmentShaderPath);
 	}
 }
 
@@ -19,7 +19,7 @@ Shader::~Shader()
 {
 	if (Renderer::s_CurrentAPI == Renderer::OPENGL) 
 	{
-		glDeleteProgram(m_ShaderID);
+		glDeleteProgram(m_ShaderHandel);
 	}
 }
 
@@ -28,7 +28,7 @@ void Shader::Bind()
 	if (Renderer::s_CurrentAPI == Renderer::OPENGL) 
 	{
 		if (m_Bounded) return;
-		glUseProgram(m_ShaderID);
+		glUseProgram(m_ShaderHandel);
 	}
 	m_Bounded = true;
 }
@@ -145,7 +145,7 @@ uint32_t Shader::GetUnifromLocation(const std::string& name) {
 		return m_UnfiromLocationCache[name];
 	}
 
-	int location = glGetUniformLocation(m_ShaderID, name.c_str());
+	int location = glGetUniformLocation(m_ShaderHandel, name.c_str());
 	if (location == -1) {
 		std::cout << "[WARNING]" << name.c_str() << " dose not exist!" << std::endl;
 	}

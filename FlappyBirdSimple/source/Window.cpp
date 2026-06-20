@@ -1,5 +1,6 @@
 #include "Window.h"
 #include <GLFW/glfw3.h>
+#include <renderer/Renderer.h>
 
 Window::Window(WindowConfig config)
 {
@@ -12,6 +13,11 @@ Window::Window(WindowConfig config)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	m_Window = glfwCreateWindow(config.Width, config.Height, config.Title.c_str(), nullptr, nullptr);
+
+	glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
+		{
+			Renderer::ResizeFrameBuffer(width, height);
+		});
 
 	glfwMakeContextCurrent(m_Window);
 	m_Config = std::move(config);

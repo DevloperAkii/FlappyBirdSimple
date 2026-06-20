@@ -13,7 +13,7 @@ Texture::Texture(std::string textureFilePath)
     }
     if (Renderer::s_CurrentAPI == Renderer::OPENGL) 
     {
-        glGenTextures(1, &m_TextureID);
+        glGenTextures(1, &m_TextureHandel);
 
         unsigned char* data = stbi_load(textureFilePath.c_str(), &m_Width, &m_Height, &m_NrComponent, 0);
         if (data)
@@ -26,7 +26,7 @@ Texture::Texture(std::string textureFilePath)
             else if (m_NrComponent == 4)
                 format = GL_RGBA;
 
-            glBindTexture(GL_TEXTURE_2D, m_TextureID);
+            glBindTexture(GL_TEXTURE_2D, m_TextureHandel);
             glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -45,7 +45,7 @@ Texture::~Texture()
 {
     if (Renderer::s_CurrentAPI == Renderer::OPENGL) 
     {
-        glDeleteTextures(1, &m_TextureID);
+        glDeleteTextures(1, &m_TextureHandel);
     }
 }
 
@@ -53,7 +53,7 @@ void Texture::Bind()
 {
     if (Renderer::s_CurrentAPI == Renderer::OPENGL) 
     {
-        glBindTexture(GL_TEXTURE_2D, m_TextureID);
+        glBindTexture(GL_TEXTURE_2D, m_TextureHandel);
     }
 }
 
@@ -63,14 +63,4 @@ void Texture::UnBind()
     {
         glBindTexture(GL_TEXTURE_2D ,0);
     }
-}
-
-void Texture::SetTile(glm::vec2 tile)
-{
-    m_Tile = tile;
-}
-
-glm::vec2& Texture::GetTile()
-{
-    return m_Tile;
 }

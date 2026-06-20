@@ -30,7 +30,8 @@ void Application::Run()
 
 		m_GameScene->UpdateScene((float)m_Clock->DeltaTime);
 
-		ImGuiLayer::EndFrame();
 		Renderer::EndFrame();
+		ImGuiLayer::EndFrame();
+		Renderer::SwapFrameBuffer();
 	}
 }
