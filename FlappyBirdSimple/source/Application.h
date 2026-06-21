@@ -16,6 +16,7 @@ private:
 	std::shared_ptr<Window> m_Window;
 	std::unique_ptr<GameScene> m_GameScene;
 	std::unique_ptr<Time> m_Clock;
+	std::unique_ptr<ma_engine> m_AudioEngine;
 
 	float DeltaTime = 0.0f;
 };

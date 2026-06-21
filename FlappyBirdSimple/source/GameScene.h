@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <miniaudio.h>
 
 struct PipeSets 
 {
@@ -24,6 +25,10 @@ struct PipeSets
 	SpriteRenderer Pipe_2;
 
 	glm::vec3 Position = glm::vec3(0.0f);
+	glm::vec3 Scale = glm::vec3(1.0f);
+	glm::vec3 Rotation = glm::vec3(0.0f);
+private:
+    glm::mat4 GetModelMatrix();
 private:
 	struct PipesScaleAndPositon
 	{
@@ -36,10 +41,12 @@ private:
 class GameScene
 {
 public:
-    GameScene(std::shared_ptr<Window>& window);
+    GameScene(std::shared_ptr<Window>& window, ma_engine* audioEngine);
     ~GameScene();
 
     void UpdateScene(float deltaTime);
+private:
+    bool CheckCollision(const glm::vec2& pos1, const glm::vec2& size1, const glm::vec2& pos2, const glm::vec2& size2);
 private:
     WindowConfig& m_WindowConfig;
 
@@ -50,15 +57,24 @@ private:
     // FIX 1: Store references/pointers to prevent copying and destructor deletions
     std::vector<Texture*> m_BirdTextures;
 
+    Texture* m_RedBirdTexture = &ResourceManager::GetResource<Texture>("Red_Bird_Midflap_Texture");
+
     Texture* m_BackgroundTexture = nullptr;
     Texture* m_BaseTexture = nullptr;
     Texture* m_GreenPipeTexture = nullptr;
 
+    bool m_PlayerDead = false;  
+    bool m_PlayerAlive = true;  
+
+    ma_engine* m_AudioEngine;
+
     std::vector<PipeSets*> m_Pipes;
 
     glm::vec3 m_BirdVelocity = glm::vec3(0.0f);
+    float m_AngluarVelocity = 0.0f;
     bool jumpPressedBefore = false;
 
+    float m_PipesSpeed = 100.0f;
     float m_TextureScollSpeed = 0.2f;
     int index = 0;
     const int m_AnimationFrame = 30;

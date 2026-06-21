@@ -21,6 +21,7 @@ target_link_libraries(FlappyBirdSimple PRIVATE
     imgui
     glm
     stbi
+    miniaudio
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

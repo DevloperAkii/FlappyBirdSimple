@@ -15,6 +15,8 @@ public:
 
     void Draw();
     void Draw(Texture& texture);
+
+    glm::mat4 GetModelMatrix();
 public:
     glm::vec3 Position = glm::vec3(0.0f);
     glm::vec3 Scale = glm::vec3(1.0f);
