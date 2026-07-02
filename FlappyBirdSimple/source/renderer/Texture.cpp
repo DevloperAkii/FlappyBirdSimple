@@ -37,7 +37,7 @@ Texture::Texture(std::string textureFilePath)
 
         }
         if(data) stbi_image_free(data);
-        ASSERT(!data, "Texture failed to load at path:", textureFilePath)
+        ASSERT(!data, "Texture failed to load at path:", textureFilePath.c_str())
     }
 }
 

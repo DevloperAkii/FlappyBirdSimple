@@ -1,4 +1,4 @@
 #pragma once
 #include <print>
 
-#define ASSERT(x, ...) if(x){ std::print("{} LINE - {} : {}", __FILE__, __VA_ARGS__, __LINE__); }
+#define ASSERT(x, ...) if(x){ std::println("{} LINE - {} : {}", __FILE__, __LINE__, __VA_ARGS__); }

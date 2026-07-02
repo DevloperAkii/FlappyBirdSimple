@@ -6,7 +6,7 @@ struct WindowConfig
 {
 	int Width = 1280;
 	int Height = 720;
-	std::string Title = "Flappy Bird Simple";
+	std::string Title = "Application";
 };
 
 struct GLFWwindow;

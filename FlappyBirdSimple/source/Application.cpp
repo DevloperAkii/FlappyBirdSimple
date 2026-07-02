@@ -3,6 +3,7 @@
 #include "renderer/ImGui.h"
 #include "ResourceManager.h"
 #include <miniaudio.h>
+#include <GLFW/glfw3.h>
 
 Application::Application()
 {
@@ -46,7 +47,7 @@ Application::~Application()
 
 void Application::Run() 
 {
-	while (m_Running) 
+	while (!glfwWindowShouldClose(glfwGetCurrentContext())) 
 	{
 		m_Clock->Tick();
 		m_Window->PollEvents();

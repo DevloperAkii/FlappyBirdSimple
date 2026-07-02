@@ -156,26 +156,27 @@ void GameScene::UpdateScene(float deltaTime)
 
     // Dereference the pointer handle safely to send it off to draw
 
-    auto io = ImGui::GetIO();
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+    //auto io = ImGui::GetIO();
+    //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
     float constGravity = -400.0f;
     m_BirdVelocity.y += constGravity * deltaTime;
-    m_AngluarVelocity -= 150.0f * deltaTime;
+    m_AngluarVelocity -= 120.0f * deltaTime;
 
     bool jumpPressedNow = glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_SPACE) == GLFW_PRESS;
 
     if (!jumpPressedBefore && jumpPressedNow) 
     {
-        m_BirdVelocity.y = 120.0f;
-        m_AngluarVelocity = glm::sqrt(150.0f * 2 * 45.0f);
+        m_BirdVelocity.y = 120.0f;    
+        m_AngluarVelocity = 0.0f;
+        m_YellowBirdSprite.Rotation.z = 45.0f;
         int result = ma_engine_play_sound(m_AudioEngine, RESOURCE_PATH"Assets/audio/wing.wav", NULL);
         if (result != MA_SUCCESS) {
             std::println("Error playing sound: {}{}", result, RESOURCE_PATH"Assets/audio/wing.wav");
         }
     }
 
-    if ((m_YellowBirdSprite.Rotation.z < -90.0f && m_AngluarVelocity < 0) || (m_YellowBirdSprite.Rotation.z > 45.0f && m_AngluarVelocity > 0)) 
+    if ((m_YellowBirdSprite.Rotation.z < -75.0f && m_AngluarVelocity < 0)) 
     {
         m_AngluarVelocity = 0.0f;
     }
