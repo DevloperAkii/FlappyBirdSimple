@@ -65,6 +65,7 @@ void GameScene::UpdateScene(float deltaTime)
         {
             m_Score++;
             m_LastCollidedPipeIndex = collidedPipeIndex;
+            PlaySoundEffect(RESOURCE_PATH"Assets/audio/point.wav");
         }
     }
 
