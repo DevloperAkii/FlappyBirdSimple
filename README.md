@@ -1,5 +1,5 @@
 # FlappyBirdSimple
 
-<img width="501" height="800" alt="image" src="https://github.com/user-attachments/assets/c6165658-79ba-4333-9525-53c04d6bf36d" />
-<img width="495" height="793" alt="image" src="https://github.com/user-attachments/assets/9f3dbdad-abdd-439f-8992-d9ca368a8b06" />
-<img width="488" height="787" alt="image" src="https://github.com/user-attachments/assets/93833106-6552-483a-8403-a5e013c97494" />
+<img width="500" height="800" alt="image" src="https://github.com/user-attachments/assets/c6165658-79ba-4333-9525-53c04d6bf36d" />
+<img width="500" height="800" alt="image" src="https://github.com/user-attachments/assets/9f3dbdad-abdd-439f-8992-d9ca368a8b06" />
+<img width="500" height="800" alt="image" src="https://github.com/user-attachments/assets/93833106-6552-483a-8403-a5e013c97494" />
