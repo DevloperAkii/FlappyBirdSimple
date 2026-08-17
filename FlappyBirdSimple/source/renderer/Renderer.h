@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Texture.h"
 
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>
@@ -17,6 +18,21 @@
 struct DrawData
 {
 public:
+	DrawData(){ }
+	~DrawData()
+	{
+		if (m_Drawable) 
+		{
+			glDeleteVertexArrays(1, &m_VAO);
+			glDeleteBuffers(1, &m_VBO);
+			glDeleteBuffers(1, &m_EBO);
+
+			uint32_t m_IndicesCount = 0;
+			uint32_t m_VerticesCount = 0;
+			m_Drawable = false;
+		}
+	}
+
 	enum DrawMode 
 	{
 		Triangle,
@@ -73,6 +89,7 @@ public:
 	};
 
 	static void Init(RendererAPI api);
+	static void Shutdown();
 
 	static void ResizeFrameBuffer(int width, int height);
 	static void GetFrameBuffer(int* width,int* height);

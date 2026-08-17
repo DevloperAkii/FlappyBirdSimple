@@ -93,6 +93,7 @@ public:
 		{
 			PipeSets& pipeSet = *m_Pipes[pipeIndex];
 			pipeSet.Position.x = (float)m_WindowConfig.Width + (c_PipeDistance * pipeIndex);
+			pipeSet.Update();
 		}
 
 		PipeSets lastPipeSet = *m_Pipes[m_Pipes.size() - 1];
@@ -112,9 +113,17 @@ public:
 			pipeSet->Position.x -= deltaTime * m_PipesSpeed;
 			if (pipeSet->Position.x < -50.0f)
 			{
-				PipeSets& lastPipeSet = *m_Pipes[m_Pipes.size() - 1];
-
-				pipeSet->Position.x = (float)m_WindowConfig.Width * 3.0f;
+				PipeSets* lastPipeSet = nullptr;
+				float lastXPosition = -1000000000000000000.0f;
+				for (auto newPipeSet : m_Pipes)
+				{
+					if (newPipeSet->Position.x > lastXPosition) 
+					{
+						lastPipeSet = newPipeSet;
+						lastXPosition = newPipeSet->Position.x;
+					}
+				}
+				pipeSet->Position.x = lastPipeSet->Position.x + c_PipeDistance;
 			}
 			pipeSet->Update();
 		}
@@ -142,6 +151,19 @@ public:
 		return false;
 	}
 	inline void SetSpeed(float newSpeed) {m_PipesSpeed = newSpeed;}
+	inline bool CheckBirdCrossing(glm::vec3 birdPosition, int& collidedPipeIndex) 
+	{
+		for (int i = 0; i < m_Pipes.size(); i++) 
+		{
+			PipeSets* pipeSet = m_Pipes[i];
+			if (pipeSet->Position.x < birdPosition.x) 
+			{
+				collidedPipeIndex = i;
+				return true;
+			}
+		}
+		return false;
+	}
 private:
 	const float c_PipeDistance = 400.0f;
 

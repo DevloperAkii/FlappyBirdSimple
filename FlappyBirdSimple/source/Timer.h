@@ -8,6 +8,7 @@ public:
 	~Time();
 	
 	void Tick();
+	void Reset();
 public:
 	inline static double DeltaTime = 0.0f;
 	inline static float TimeScale = 1.0f;

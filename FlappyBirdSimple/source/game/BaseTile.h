@@ -11,8 +11,6 @@ public:
 		float halfWidth  = windowConfig.Width / 2.0f;
 		float halfHeight = windowConfig.Height / 2.0f;
 
-		m_BaseTexture = &ResourceManager::GetResource<Texture>("Base_Texture");
-
 		Position = glm::vec3(halfWidth, 50.0f, 0.0f);
 		Scale    = glm::vec3(halfWidth / 100.0f, 0.5f, 1.0f);
 
@@ -42,13 +40,15 @@ public:
 		}
 		return false;
 	}
+
+	inline void SetScrollSpeed(float speed) {m_TextureScollSpeed = speed;}
 public:
 	glm::vec3 Position = glm::vec3(0.0f);
 	glm::vec3 Rotation = glm::vec3(0.0f);
 	glm::vec3 Scale    = glm::vec3(1.0f);
 private:
 	SpriteRenderer m_BaseSprite;
-	Texture* m_BaseTexture = nullptr;
+	Texture* m_BaseTexture = &ResourceManager::GetResource<Texture>("Base_Texture");
 
 	float m_TextureScollSpeed = 0.2f;
 };

@@ -27,10 +27,8 @@ void Shader::Bind()
 {
 	if (Renderer::s_CurrentAPI == Renderer::OPENGL) 
 	{
-		if (m_Bounded) return;
 		glUseProgram(m_ShaderHandel);
 	}
-	m_Bounded = true;
 }
 
 void Shader::UnBind()

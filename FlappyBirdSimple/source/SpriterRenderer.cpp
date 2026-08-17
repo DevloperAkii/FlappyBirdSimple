@@ -11,6 +11,10 @@ SpriteRenderer::SpriteRenderer()
     m_DrawData.GenerateDrawData(m_Vertices, m_Indices);
 }
 
+SpriteRenderer::~SpriteRenderer()
+{
+}
+
 void SpriteRenderer::Draw()
 {
     int frameBufferWidth, frameBufferHeight;

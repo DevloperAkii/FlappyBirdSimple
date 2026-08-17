@@ -4,36 +4,57 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+int glCheckError_(const char* file, int line)
+{
+	GLenum errorCode;
+	while ((errorCode = glGetError()) != GL_NO_ERROR)
+	{
+		std::string error;
+		switch (errorCode)
+		{
+		case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
+		case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
+		case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;
+		case GL_STACK_OVERFLOW:                error = "STACK_OVERFLOW"; break;
+		case GL_STACK_UNDERFLOW:               error = "STACK_UNDERFLOW"; break;
+		case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
+		case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
+		}
+		std::println("{} | {} ({})", error, file, line);
+	}
+	return errorCode;
+}
+
 void DrawData::GenerateDrawData(std::vector<float>& vertices, std::vector<uint32_t>& indices)
 {
 	GenerateDrawData(vertices);
 
-	glBindVertexArray(m_VAO);
+	glBindVertexArray(m_VAO); glCheckError();
 
-	glGenBuffers(1, &m_EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+	glGenBuffers(1, &m_EBO); glCheckError();
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO); glCheckError();
 
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indices.size(), indices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indices.size(), indices.data(), GL_STATIC_DRAW); glCheckError();
 
-	glBindVertexArray(0);
+	glBindVertexArray(0); glCheckError();
 	m_IndicesCount = indices.size();
 }
 
 void DrawData::GenerateDrawData(std::vector<float>& vertices)
 {
-	glGenVertexArrays(1, &m_VAO);
-	glBindVertexArray(m_VAO);
+	glGenVertexArrays(1, &m_VAO); glCheckError();
+	glBindVertexArray(m_VAO); glCheckError();
 
-	glGenBuffers(1, &m_VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	glGenBuffers(1, &m_VBO); glCheckError();
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO); glCheckError();
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (const void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (const void*)(sizeof(float) * 3));
-	glEnableVertexAttribArray(1);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW); glCheckError();
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (const void*)0); glCheckError();
+	glEnableVertexAttribArray(0); glCheckError();
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (const void*)(sizeof(float) * 3)); glCheckError();
+	glEnableVertexAttribArray(1); glCheckError();
 
-	glBindVertexArray(0);
+	glBindVertexArray(0); glCheckError();
 
 	m_Drawable = true;
 	m_VerticesCount = vertices.size() / 5;
@@ -79,16 +100,21 @@ void Renderer::Init(RendererAPI api)
 
 		glfwGetFramebufferSize(glfwGetCurrentContext(), &s_FrameBufferWidth, &s_FrameBufferHeight);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND); glCheckError();
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); glCheckError();
 
 		if (!s_LineData.Generated) 
 		{
-			glGenVertexArrays(1, &s_LineData.m_DrawData.m_VAO);
-			glGenBuffers(1, &s_LineData.m_DrawData.m_VBO);
+			glGenVertexArrays(1, &s_LineData.m_DrawData.m_VAO); glCheckError();
+			glGenBuffers(1, &s_LineData.m_DrawData.m_VBO); glCheckError();
 			s_LineData.m_DrawData.m_Topology = DrawData::Line;
 		}
 	}
+}
+
+void Renderer::Shutdown()
+{
+	s_DataToDraw.clear();
 }
 
 void Renderer::SetClearColor(float r, float g, float b, float a)
@@ -103,7 +129,7 @@ void Renderer::ResizeFrameBuffer(int width, int height)
 		s_FrameBufferWidth = width;
 		s_FrameBufferHeight = height;
 
-		glViewport(0, 0, width, height);
+		glViewport(0, 0, width, height); glCheckError();
 	}
 }
 
@@ -117,8 +143,11 @@ void Renderer::StartFrame()
 {
 	if (s_CurrentAPI == OPENGL) 
 	{
-		glClearColor(s_ClearColorRed, s_ClearColorGreen, s_ClearColorBlue, s_ClearColorAlpha);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(s_ClearColorRed, s_ClearColorGreen, s_ClearColorBlue, s_ClearColorAlpha); glCheckError();
+		glClear(GL_COLOR_BUFFER_BIT); glCheckError();
+
+		s_DataToDraw.clear();
+		s_TextureSlot = 0;
 	}
 }
 
@@ -153,18 +182,18 @@ void Renderer::DrawLine(glm::vec3 startPos, glm::vec3 endPos, Shader shader, glm
 			endPos.x,   endPos.y,   endPos.z
 		};
 
-		glBindVertexArray(s_LineData.m_DrawData.m_VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, s_LineData.m_DrawData.m_VBO);
+		glBindVertexArray(s_LineData.m_DrawData.m_VAO); glCheckError();
+		glBindBuffer(GL_ARRAY_BUFFER, s_LineData.m_DrawData.m_VBO); glCheckError();
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * lineVertices.size(), lineVertices.data(), GL_DYNAMIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (const void*)0);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * lineVertices.size(), lineVertices.data(), GL_DYNAMIC_DRAW); glCheckError();
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (const void*)0); glCheckError();
 
-		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(0); glCheckError();
 
 		//Temp maybe removed soon
-		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(1); glCheckError();
 		//
-		glBindVertexArray(0);
+		glBindVertexArray(0); glCheckError();
 
 		if (!s_LineData.m_DrawData.m_Shader) 
 		{
@@ -198,19 +227,19 @@ void Renderer::EndFrame()
 		{
 			for (const auto& drawData : data) {
 
-				glBindVertexArray(drawData->m_VAO);
+				glBindVertexArray(drawData->m_VAO); glCheckError();
 				drawData->m_Shader->Bind();
 
 				if (drawData->m_HasTexture)
 				{
-					glActiveTexture(GL_TEXTURE0 + s_TextureSlot);
+					glActiveTexture(GL_TEXTURE0 + s_TextureSlot); glCheckError();
 					drawData->m_Texture->Bind();
 					drawData->m_Shader->SetUniform(Shader::Int, "u_BaseTexture", s_TextureSlot);
 					s_TextureSlot++;
 				}
 				else
 				{
-					glActiveTexture(GL_TEXTURE0);
+					glActiveTexture(GL_TEXTURE0); glCheckError();
 					if (drawData->m_Texture) drawData->m_Texture->UnBind();
 				}
 
@@ -232,11 +261,11 @@ void Renderer::EndFrame()
 
 				if (drawData->m_IndicesCount == 0)
 				{
-					glDrawArrays(glTopology, 0, drawData->m_VerticesCount);
+					glDrawArrays(glTopology, 0, drawData->m_VerticesCount); glCheckError();
 				}
 				else if (drawData->m_IndicesCount > 0)
 				{
-					glDrawElements(glTopology, drawData->m_IndicesCount, GL_UNSIGNED_INT, nullptr);
+					glDrawElements(glTopology, drawData->m_IndicesCount, GL_UNSIGNED_INT, nullptr); glCheckError();
 				}
 
 				drawData->m_ShaderUniforms.clear();

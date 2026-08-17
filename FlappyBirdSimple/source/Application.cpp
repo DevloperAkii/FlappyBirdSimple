@@ -36,7 +36,9 @@ Application::Application()
 	ResourceManager::LoadResource<Texture>("Yellow_Bird_Downflap_Texture",	 RESOURCE_PATH"Assets/sprites/yellowbird-downflap.png");
 	ResourceManager::LoadResource<Texture>("Red_Bird_Midflap_Texture",	 RESOURCE_PATH"Assets/sprites/redbird-midflap.png");
 
-	m_GameScene = std::make_unique<GameScene>(m_Window, m_AudioEngine.get());
+	m_GameScene = std::make_unique<GameScene>(m_Window, m_AudioEngine.get(), this);
+
+	m_Clock->Reset();
 }
 
 Application::~Application()
@@ -56,10 +58,31 @@ void Application::Run()
 		Renderer::StartFrame();
 		ImGuiLayer::StartFrame();
 
-		m_GameScene->UpdateScene((float)m_Clock->DeltaTime);
+		if (m_GameScene.get()) 
+		{
+			m_GameScene->UpdateScene((float)m_Clock->DeltaTime);
+			m_GameScene->GuiScene();
+		}
 
 		Renderer::EndFrame();
 		ImGuiLayer::EndFrame();
 		Renderer::SwapFrameBuffer();
+
+		CheckRestart();
+	}
+}
+
+void Application::Restart()
+{
+	m_Restart = true;
+}
+
+void Application::CheckRestart()
+{
+	if (m_Restart) 
+	{
+		m_GameScene.reset(new GameScene(m_Window, m_AudioEngine.get(), this));
+		Renderer::Shutdown();
+		m_Restart = false;
 	}
 }

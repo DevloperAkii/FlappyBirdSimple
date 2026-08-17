@@ -11,7 +11,7 @@ class SpriteRenderer
 {
 public:
     SpriteRenderer();
-    ~SpriteRenderer() = default;
+    ~SpriteRenderer();
 
     void Draw();
     void Draw(Texture& texture);

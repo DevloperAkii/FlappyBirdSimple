@@ -18,3 +18,9 @@ void Time::Tick()
 	DeltaTime = elapsed.count();
 	DeltaTime *= TimeScale;
 }
+
+void Time::Reset() 
+{
+	m_LastFrameTime = std::chrono::high_resolution_clock::now();
+	DeltaTime = 0.0;
+}

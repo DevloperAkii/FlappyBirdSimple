@@ -17,7 +17,7 @@ public:
         m_BirdTextures.push_back(&ResourceManager::GetResource<Texture>("Yellow_Bird_Middleflap_Texture"));
         m_BirdTextures.push_back(&ResourceManager::GetResource<Texture>("Yellow_Bird_Downflap_Texture"));
 
-        float halfWidth = windowConfig.Width / 2.0f;
+        float halfWidth  = windowConfig.Width  / 2.0f;
         float halfHeight = windowConfig.Height / 2.0f;
 
         Position = glm::vec3(halfWidth - (halfWidth / 2), halfHeight, 0.0f);
@@ -42,7 +42,7 @@ public:
 
         bool jumpPressedNow = glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_SPACE) == GLFW_PRESS;
 
-        if (!jumpPressedBefore && jumpPressedNow)
+        if (!jumpPressedBefore && jumpPressedNow && !m_GameOver)
         {
             m_BirdVelocity.y = 120.0f;
             m_AngluarVelocity = 0.0f;

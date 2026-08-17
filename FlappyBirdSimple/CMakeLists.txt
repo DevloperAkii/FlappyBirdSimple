@@ -3,7 +3,7 @@
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp")
 file(GLOB_RECURSE MY_HEADERS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.h")
 
-add_executable(FlappyBirdSimple ${MY_SOURCES} ${MY_HEADERS})
+add_executable(FlappyBirdSimple ${MY_SOURCES} ${MY_HEADERS} "${CMAKE_CURRENT_SOURCE_DIR}/resources/Assets/resource.rc")
 
 # Fix: Map MSVC release optimization flags to the custom "Dist" type
 if(MSVC)

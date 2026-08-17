@@ -11,8 +11,13 @@ public:
 	Application();
 	~Application();
 	void Run();
+	void Restart();
+private:
+	void CheckRestart();
 private:
 	bool m_Running = true;
+	bool m_Restart = false;
+
 	std::shared_ptr<Window> m_Window;
 	std::unique_ptr<GameScene> m_GameScene;
 	std::unique_ptr<Time> m_Clock;
