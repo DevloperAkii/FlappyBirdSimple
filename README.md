@@ -11,4 +11,6 @@
   - Space to Jump
 
 ## Build Instructions
-This porject is made using cmake after cloning the project open cmd in the directory and make a new directory name build using command `mkdir build` then go to the direction by using the command `cd build` then run the command `cmake ..`.
+This porject is made using cmake after cloning the project open cmd in the directory and make a new directory name build using command `mkdir build`  
+then go to the direction by using the command `cd build`  
+then run the command `cmake ..`.
