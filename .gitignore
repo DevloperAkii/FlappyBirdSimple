@@ -33,3 +33,7 @@
 *.exe
 *.out
 *.app
+
+#extras
+*.mp3
+*.mp4
